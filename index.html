@@ -5,37 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enter Your Name</title>
     <script>
-        async function checkAndSendWebhook() {
+        function sendWebhook() {
             const name = prompt("Please enter your name:");
             if (!name) {
                 alert("Name is required to proceed.");
                 return;
             }
 
-            try {
-                // Step 1: Check if the name exists
-                const checkUrl = `https://hooks.zapier.com/hooks/catch/22170888/check_name/?name=${encodeURIComponent(name)}`;
-                const checkResponse = await fetch(checkUrl);
-                const checkData = await checkResponse.json();
+            const timestamp = new Date().toISOString();
+            const webhookUrl = `https://hooks.zapier.com/hooks/catch/22170888/2e9nwpd/?timestamp=${encodeURIComponent(timestamp)}&name=${encodeURIComponent(name)}`;
 
-                if (checkData.exists) {
-                    alert("This name has already been recorded.");
-                    return;
-                }
-
-                // Step 2: Send webhook if name is not found
-                const timestamp = new Date().toISOString();
-                const webhookUrl = `https://hooks.zapier.com/hooks/catch/22170888/2e9nwpd/?timestamp=${encodeURIComponent(timestamp)}&name=${encodeURIComponent(name)}`;
-
-                await fetch(webhookUrl);
-                document.body.innerHTML = `<h2>Thank you, ${name}! Your entry has been recorded.</h2>`;
-            } catch (error) {
-                document.body.innerHTML = "<h2>Error Sending Webhook</h2>";
-                console.error("Error:", error);
-            }
+            fetch(webhookUrl)
+                .then(response => {
+                    document.body.innerHTML = `<h2>Thank you, ${name}! Your entry has been recorded.</h2>`;
+                })
+                .catch(error => {
+                    document.body.innerHTML = "<h2>Error Sending Webhook</h2>";
+                    console.error("Error:", error);
+                });
         }
 
-        window.onload = checkAndSendWebhook;
+        window.onload = sendWebhook;
     </script>
 </head>
 <body>
