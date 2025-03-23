@@ -6,18 +6,23 @@
     <title>Lunch Break Timestamp</title>
     <script>
         function sendTimestamp() {
-            let id = prompt("Enter your ID number:");
-            if (id) {
+            let action = confirm("Click OK for IN, Cancel for OUT");
+            let name = prompt("Enter your name:");
+            
+            if (name) {
+                let url = "https://hooks.zapier.com/hooks/catch/22170888/2e9nwpd/";
+                let method = action ? "POST" : "DELETE";
                 let timestamp = new Date().toISOString();
+                let data = action ? { name: name, timestamp: timestamp } : { name: name };
                 
-                fetch("https://hooks.zapier.com/hooks/catch/22170888/2e9nwpd/", {
-                    method: "POST",
+                fetch(url, {
+                    method: method,
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: id, timestamp: timestamp })
+                    body: JSON.stringify(data)
                 })
                 .then(response => response.json())
-                .then(data => alert("Timestamp recorded successfully!"))
-                .catch(error => alert("Error sending data."));
+                .then(data => alert(action ? "Timestamp recorded successfully!" : "Record deleted successfully!"))
+                .catch(error => alert("Error processing request."));
             }
         }
     </script>
