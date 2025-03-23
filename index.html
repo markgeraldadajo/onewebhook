@@ -3,31 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lunch Break Timestamp</title>
+    <title>Enter Your Name</title>
     <script>
-        function sendTimestamp() {
-            let action = confirm("Click OK for IN, Cancel for OUT");
-            let name = prompt("Enter your name:");
-            
-            if (name) {
-                let url = "https://hooks.zapier.com/hooks/catch/22170888/2e9nwpd/";
-                let method = action ? "POST" : "DELETE";
-                let timestamp = new Date().toISOString();
-                let data = action ? { name: name, timestamp: timestamp } : { name: name };
-                
-                fetch(url, {
-                    method: method,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(data => alert(action ? "Timestamp recorded successfully!" : "Record deleted successfully!"))
-                .catch(error => alert("Error processing request."));
+        function sendWebhook() {
+            const name = prompt("Please enter your name:");
+            if (!name) {
+                alert("Name is required to proceed.");
+                return;
             }
+
+            const timestamp = new Date().toISOString();
+            const webhookUrl = `https://hooks.zapier.com/hooks/catch/22170888/2e9nwpd/?timestamp=${encodeURIComponent(timestamp)}&name=${encodeURIComponent(name)}`;
+
+            fetch(webhookUrl)
+                .then(response => {
+                    document.body.innerHTML = `<h2>Thank you, ${name}! Your entry has been recorded.</h2>`;
+                })
+                .catch(error => {
+                    document.body.innerHTML = "<h2>Error Sending Webhook</h2>";
+                    console.error("Error:", error);
+                });
         }
+
+        window.onload = sendWebhook;
     </script>
 </head>
 <body>
-    <button onclick="sendTimestamp()">Record Lunch Break</button>
+    <h2>Recording your entry...</h2>
+    <p>If you do not see a prompt, please allow pop-ups.</p>
 </body>
 </html>
