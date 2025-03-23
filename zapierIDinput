@@ -3,33 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter Your Name</title>
+    <title>Lunch Break Timestamp</title>
     <script>
-        function sendWebhook() {
-            const employeeID = prompt("Please enter your Employee ID:");
-            if (!employeeID) {
-                alert("Employee ID is required to proceed.");
-                return;
-            }
-
-            const timestamp = new Date().toISOString();
-            const webhookUrl = `https://hooks.zapier.com/hooks/catch/22170888/2e9wnb3/?timestamp=${encodeURIComponent(timestamp)}&ID=${encodeURIComponent(employeeID)}`;
-
-            fetch(webhookUrl)
-                .then(response => {
-                    document.body.innerHTML = `<h2>Thank you! Your entry has been recorded.</h2>`;
+        function sendTimestamp() {
+            let id = prompt("Enter your ID number:");
+            if (id) {
+                let timestamp = new Date().toISOString();
+                
+                fetch("https://hooks.zapier.com/hooks/catch/22170888/2e9nwpd/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: id, timestamp: timestamp })
                 })
-                .catch(error => {
-                    document.body.innerHTML = "<h2>Error Sending Webhook</h2>";
-                    console.error("Error:", error);
-                });
+                .then(response => response.json())
+                .then(data => alert("Timestamp recorded successfully!"))
+                .catch(error => alert("Error sending data."));
+            }
         }
-
-        window.onload = sendWebhook;
     </script>
 </head>
 <body>
-    <h2>Recording your entry...</h2>
-    <p>If you do not see a prompt, please allow pop-ups.</p>
+    <button onclick="sendTimestamp()">Record Lunch Break</button>
 </body>
 </html>
